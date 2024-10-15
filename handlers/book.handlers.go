@@ -23,7 +23,7 @@ func HandleGetAllBooks(bs *stores.BookStore) http.HandlerFunc {
 // GET Book by ID
 func HandleGetBook(bs *stores.BookStore) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		idInt, err := strconv.Atoi(r.URL.Query().Get("id"))
+		idInt, err := strconv.Atoi(r.PathValue("id"))
 		if err != nil {
 			http.Error(w, "Geçersiz ID", http.StatusBadRequest)
 			return
@@ -59,7 +59,7 @@ func HandleCreateBook(bs *stores.BookStore) http.HandlerFunc {
 // UPDATE Book
 func HandleUpdateBook(bs *stores.BookStore) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		idInt, err := strconv.Atoi(r.URL.Query().Get("id"))
+		idInt, err := strconv.Atoi(r.PathValue("id"))
 		if err != nil {
 			http.Error(w, "Geçersiz ID", http.StatusBadRequest)
 			return
@@ -83,7 +83,7 @@ func HandleUpdateBook(bs *stores.BookStore) http.HandlerFunc {
 // DELETE Book
 func HandleDeleteBook(bs *stores.BookStore) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		idInt, err := strconv.Atoi(r.URL.Query().Get("id"))
+		idInt, err := strconv.Atoi(r.PathValue("id"))
 		if err != nil {
 			http.Error(w, "Geçersiz ID", http.StatusBadRequest)
 			return

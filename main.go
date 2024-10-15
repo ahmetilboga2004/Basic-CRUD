@@ -26,7 +26,11 @@ func main() {
 	bookMux.HandleFunc("PUT /{id}", handlers.HandleUpdateBook(bs))
 
 	// Author Subrouter
+	authorMux.HandleFunc("GET /", handlers.HandleGetAllAuthors(as))
+	authorMux.HandleFunc("GET /{id}", handlers.HandleGetAuthor(as))
 	authorMux.HandleFunc("POST /", handlers.HandleCreateAuthor(as))
+	authorMux.HandleFunc("PUT /{id}", handlers.HandleUpdateAuthor(as))
+	authorMux.HandleFunc("DELETE /{id}", handlers.HandleDeleteAuthor(as))
 
 	srv := &http.Server{
 		Addr:         ":4000",
