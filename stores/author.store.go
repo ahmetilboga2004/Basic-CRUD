@@ -6,57 +6,56 @@ import (
 )
 
 type AuthorStore struct {
-	authors []models.Author
-	NextId  int
+	Authors map[int]models.Author
+	NextID  int
 }
 
-func (as *AuthorStore) CreateAuthor(name string, age int) (models.Author, error) {
-	author := models.Author{
-		ID:   as.NextId,
-		Name: name,
-		Age:  age,
+// Yazar oluşturma
+func (as *AuthorStore) Create(item interface{}) error {
+	author, ok := item.(models.Author)
+	if !ok {
+		return errors.New("invalid author type")
 	}
-
-	as.authors = append(as.authors, author)
-	as.NextId++
-	return author, nil
-}
-
-func (as *AuthorStore) GetAuthor(id int) (models.Author, error) {
-	if id < 0 || id > len(as.authors) {
-		return models.Author{}, errors.New("geçersiz ID")
-	}
-	author := as.authors[id]
-	if author == (models.Author{}) {
-		return models.Author{}, errors.New("yazar bulunamadı")
-	}
-	return author, nil
-}
-
-func (as *AuthorStore) GetAllAuthor() ([]models.Author, error) {
-	if len(as.authors) <= 0 {
-		return nil, errors.New("herhangi bir yazar bulunamadı")
-	}
-	return as.authors, nil
-}
-
-func (as *AuthorStore) DeleteAuthor(id int) error {
-	if id < 0 || id > len(as.authors) {
-		return errors.New("gerçersiz ID")
-	}
-	as.authors = append(as.authors[:id], as.authors[id+1:]...)
+	author.ID = as.NextID
+	as.Authors[as.NextID] = author
+	as.NextID++
 	return nil
 }
 
-func (as *AuthorStore) UpdateAuthor(id int, name string, age int) error {
-	if id < 0 || id > len(as.authors) {
-		return errors.New("geçersiz ID")
+func (as *AuthorStore) GetAll() (interface{}, error) {
+	if len(as.Authors) == 0 {
+		return nil, errors.New("no authors found")
 	}
-	author := as.authors[id]
-	if author == (models.Author{}) {
-		return errors.New("yazar bulunamadı")
+	return as.Authors, nil
+}
+
+func (as *AuthorStore) Get(id int) (interface{}, error) {
+	author, exists := as.Authors[id]
+	if !exists {
+		return nil, errors.New("author not found")
 	}
-	author.Name = name
-	author.Age = age
+	return author, nil
+}
+
+func (as *AuthorStore) Update(id int, item interface{}) error {
+	author, ok := item.(models.Author)
+	if !ok {
+		return errors.New("invalid author type")
+	}
+	if existsAuthor, exists := as.Authors[id]; exists {
+		existsAuthor.Name = author.Name
+		existsAuthor.Age = author.Age
+		as.Authors[id] = existsAuthor
+		return nil
+	}
+	return errors.New("author not found")
+}
+
+func (as *AuthorStore) Delete(id int) error {
+	_, exists := as.Authors[id]
+	if !exists {
+		return errors.New("invalid author type")
+	}
+	delete(as.Authors, id)
 	return nil
 }

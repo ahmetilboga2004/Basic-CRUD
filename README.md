@@ -1,15 +1,20 @@
 
 ```
 HttpServer
+├─ README.md
+├─ go.mod
 ├─ handlers
-│  ├─ author.handlers.go
-│  └─ book.handlers.go
+│  ├─ author.handler.go
+│  └─ book.handler.go
 ├─ main.go
 ├─ models
-│  ├─ author.models.go
-│  └─ book.models.go
-└─ stores
-   ├─ author.store.go
-   └─ book.store.go
+│  ├─ author.model.go
+│  └─ book.model.go
+├─ stores
+│  ├─ author.store.go
+│  ├─ book.store.go
+│  └─ store.go
+└─ utils
+   └─ http.util.go
 
 ```

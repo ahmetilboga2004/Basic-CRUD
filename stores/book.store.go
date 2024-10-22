@@ -6,63 +6,62 @@ import (
 )
 
 type BookStore struct {
-	Books  []models.Book
+	Books  map[int]models.Book
 	NextID int
 }
 
 // Kitap oluşturma
-func (bs *BookStore) CreateBook(title string, author models.Author) (models.Book, error) {
-	book := models.Book{
-		ID:     bs.NextID,
-		Title:  title,
-		Author: author,
+func (bs *BookStore) Create(item interface{}) error {
+	book, ok := item.(models.Book)
+	if !ok {
+		return errors.New("invalid item type")
 	}
-	bs.Books = append(bs.Books, book)
+	if book.Title == "" || len(book.Title) > 20 {
+		return errors.New("invalid book title")
+	}
+	book.ID = bs.NextID
+	bs.Books[bs.NextID] = book
 	bs.NextID++
-	return book, nil
+	return nil
 }
 
 // Tüm kitapları listeleme
-func (bs *BookStore) GetAllBooks() ([]models.Book, error) {
+func (bs *BookStore) GetAll() (interface{}, error) {
 	if len(bs.Books) == 0 {
-		return nil, errors.New("herhangi bir kitap bulunamadı")
+		return nil, errors.New("no books found")
 	}
 	return bs.Books, nil
 }
 
 // Tek bir kitabı getirme
-func (bs *BookStore) GetBook(id int) (models.Book, error) {
-	if id < 0 || id >= len(bs.Books) {
-		return models.Book{}, errors.New("geçersiz ID")
-	}
-	book := bs.Books[id]
-	if book == (models.Book{}) {
-		return models.Book{}, errors.New("kitap bulunamadı")
+func (bs *BookStore) Get(id int) (interface{}, error) {
+	book, exists := bs.Books[id]
+	if !exists {
+		return nil, errors.New("book not found")
 	}
 	return book, nil
 }
 
 // Kitap güncelleme
-func (bs *BookStore) UpdateBook(id int, title string) error {
-	for i, book := range bs.Books {
-		if book.ID == id {
-			bs.Books[i].Title = title
-			return nil
-		}
+func (bs *BookStore) Update(id int, item interface{}) error {
+	book, exists := item.(models.Book)
+	if !exists {
+		return errors.New("invalid book type")
 	}
-	return errors.New("güncellemek istediğiniz kitap bulunamadı")
+	if existsBook, exists := bs.Books[id]; exists {
+		existsBook.Title = book.Title
+		bs.Books[id] = existsBook
+		return nil
+	}
+	return errors.New("book not found")
 }
 
 // Kitap silme
-func (bs *BookStore) DeleteBook(id int) error {
-	if id < 0 || id >= len(bs.Books) {
-		return errors.New("geçersiz ID")
+func (bs *BookStore) Delete(id int) error {
+	_, exists := bs.Books[id]
+	if !exists {
+		return errors.New("book not found")
 	}
-	for i, book := range bs.Books {
-		if book.ID == id {
-			bs.Books = append(bs.Books[:i], bs.Books[i+1:]...)
-			return nil
-		}
-	}
-	return errors.New("kitap bulunamadı")
+	delete(bs.Books, id)
+	return nil
 }

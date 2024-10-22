@@ -2,14 +2,25 @@ package main
 
 import (
 	"HttpServer/handlers"
+	"HttpServer/models"
 	"HttpServer/stores"
 	"net/http"
 	"time"
 )
 
 func main() {
-	bs := &stores.BookStore{}
-	as := &stores.AuthorStore{}
+	bs := &stores.BookStore{
+		Books:  make(map[int]models.Book),
+		NextID: 1,
+	}
+	as := &stores.AuthorStore{
+		Authors: make(map[int]models.Author),
+		NextID:  1,
+	}
+
+	bookHandler := handlers.NewBookHandler(bs)
+	authorHandler := handlers.NewAuthorHandler(as)
+
 	mux := http.NewServeMux()
 
 	bookMux := http.NewServeMux()
@@ -19,18 +30,18 @@ func main() {
 	mux.Handle("/authors/", http.StripPrefix("/authors", authorMux))
 
 	// Book Subrouter
-	bookMux.HandleFunc("GET /", handlers.HandleGetAllBooks(bs))
-	bookMux.HandleFunc("GET /{id}", handlers.HandleGetBook(bs))
-	bookMux.HandleFunc("POST /", handlers.HandleCreateBook(bs))
-	bookMux.HandleFunc("DELETE /{id}", handlers.HandleDeleteBook(bs))
-	bookMux.HandleFunc("PUT /{id}", handlers.HandleUpdateBook(bs))
+	bookMux.HandleFunc("GET /", bookHandler.HandleGetAll)
+	bookMux.HandleFunc("GET /{id}", bookHandler.HandleGetByID)
+	bookMux.HandleFunc("POST /", bookHandler.HandleCreate)
+	bookMux.HandleFunc("PUT /{id}", bookHandler.HandleUpdate)
+	bookMux.HandleFunc("DELETE /{id}", bookHandler.HandleDelete)
 
 	// Author Subrouter
-	authorMux.HandleFunc("GET /", handlers.HandleGetAllAuthors(as))
-	authorMux.HandleFunc("GET /{id}", handlers.HandleGetAuthor(as))
-	authorMux.HandleFunc("POST /", handlers.HandleCreateAuthor(as))
-	authorMux.HandleFunc("PUT /{id}", handlers.HandleUpdateAuthor(as))
-	authorMux.HandleFunc("DELETE /{id}", handlers.HandleDeleteAuthor(as))
+	authorMux.HandleFunc("GET /", authorHandler.HandleGetAll)
+	authorMux.HandleFunc("GET /{id}", authorHandler.HandleGetByID)
+	authorMux.HandleFunc("POST /", authorHandler.HandleCreate)
+	authorMux.HandleFunc("PUT /{id}", authorHandler.HandleUpdate)
+	authorMux.HandleFunc("DELETE /{id}", authorHandler.HandleDelete)
 
 	srv := &http.Server{
 		Addr:         ":4000",
