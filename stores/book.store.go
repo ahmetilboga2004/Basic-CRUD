@@ -11,7 +11,7 @@ type BookStore struct {
 }
 
 // Kitap oluşturma
-func (bs *BookStore) Create(item interface{}) error {
+func (bs *BookStore) Create(item any) error {
 	book, ok := item.(models.Book)
 	if !ok {
 		return errors.New("invalid item type")
@@ -26,7 +26,7 @@ func (bs *BookStore) Create(item interface{}) error {
 }
 
 // Tüm kitapları listeleme
-func (bs *BookStore) GetAll() (interface{}, error) {
+func (bs *BookStore) GetAll() (any, error) {
 	if len(bs.Books) == 0 {
 		return nil, errors.New("no books found")
 	}
@@ -34,7 +34,7 @@ func (bs *BookStore) GetAll() (interface{}, error) {
 }
 
 // Tek bir kitabı getirme
-func (bs *BookStore) Get(id int) (interface{}, error) {
+func (bs *BookStore) Get(id int) (any, error) {
 	book, exists := bs.Books[id]
 	if !exists {
 		return nil, errors.New("book not found")
@@ -43,7 +43,7 @@ func (bs *BookStore) Get(id int) (interface{}, error) {
 }
 
 // Kitap güncelleme
-func (bs *BookStore) Update(id int, item interface{}) error {
+func (bs *BookStore) Update(id int, item any) error {
 	book, exists := item.(models.Book)
 	if !exists {
 		return errors.New("invalid book type")

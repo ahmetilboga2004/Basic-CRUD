@@ -1,9 +1,9 @@
 package stores
 
 type Store interface {
-	Create(item interface{}) error
-	GetAll() (interface{}, error)
-	Get(id int) (interface{}, error)
-	Update(id int, item interface{}) error
+	Create(item any) error
+	GetAll() (any, error)
+	Get(id int) (any, error)
+	Update(id int, item any) error
 	Delete(id int) error
 }

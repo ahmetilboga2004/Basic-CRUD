@@ -11,7 +11,7 @@ type AuthorStore struct {
 }
 
 // Yazar oluşturma
-func (as *AuthorStore) Create(item interface{}) error {
+func (as *AuthorStore) Create(item any) error {
 	author, ok := item.(models.Author)
 	if !ok {
 		return errors.New("invalid author type")
@@ -22,14 +22,14 @@ func (as *AuthorStore) Create(item interface{}) error {
 	return nil
 }
 
-func (as *AuthorStore) GetAll() (interface{}, error) {
+func (as *AuthorStore) GetAll() (any, error) {
 	if len(as.Authors) == 0 {
 		return nil, errors.New("no authors found")
 	}
 	return as.Authors, nil
 }
 
-func (as *AuthorStore) Get(id int) (interface{}, error) {
+func (as *AuthorStore) Get(id int) (any, error) {
 	author, exists := as.Authors[id]
 	if !exists {
 		return nil, errors.New("author not found")
@@ -37,7 +37,7 @@ func (as *AuthorStore) Get(id int) (interface{}, error) {
 	return author, nil
 }
 
-func (as *AuthorStore) Update(id int, item interface{}) error {
+func (as *AuthorStore) Update(id int, item any) error {
 	author, ok := item.(models.Author)
 	if !ok {
 		return errors.New("invalid author type")
