@@ -5,6 +5,7 @@ HttpServer
 ├─ go.mod
 ├─ handlers
 │  ├─ author.handler.go
+│  ├─ base.handler.go
 │  └─ book.handler.go
 ├─ main.go
 ├─ models
@@ -12,8 +13,8 @@ HttpServer
 │  └─ book.model.go
 ├─ stores
 │  ├─ author.store.go
-│  ├─ book.store.go
-│  └─ store.go
+│  ├─ base.store.go
+│  └─ book.store.go
 └─ utils
    └─ http.util.go
 

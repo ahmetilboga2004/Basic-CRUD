@@ -2,24 +2,17 @@ package main
 
 import (
 	"HttpServer/handlers"
-	"HttpServer/models"
 	"HttpServer/stores"
 	"net/http"
 	"time"
 )
 
 func main() {
-	bs := &stores.BookStore{
-		Books:  make(map[int]models.Book),
-		NextID: 1,
-	}
-	as := &stores.AuthorStore{
-		Authors: make(map[int]models.Author),
-		NextID:  1,
-	}
+	bookStore := stores.NewBookStore()
+	authorStore := stores.NewAuthorStore()
 
-	bookHandler := handlers.NewBookHandler(bs)
-	authorHandler := handlers.NewAuthorHandler(as)
+	bookHandler := handlers.NewBookHandler(bookStore)
+	authorHandler := handlers.NewAuthorHandler(authorStore)
 
 	mux := http.NewServeMux()
 
