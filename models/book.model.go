@@ -16,7 +16,3 @@ func (b *Book) Validate() error {
 	}
 	return nil
 }
-
-func (b *Book) SetID(id int) {
-	b.ID = id
-}

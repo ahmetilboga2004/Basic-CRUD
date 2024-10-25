@@ -18,7 +18,3 @@ func (a Author) Validate() error {
 	}
 	return nil
 }
-
-func (a *Author) SetID(id int) {
-	a.ID = id
-}

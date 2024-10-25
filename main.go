@@ -3,13 +3,17 @@ package main
 import (
 	"HttpServer/handlers"
 	"HttpServer/stores"
+	"HttpServer/utils"
 	"net/http"
 	"time"
 )
 
 func main() {
-	bookStore := stores.NewBookStore()
-	authorStore := stores.NewAuthorStore()
+	utils.InitDB()
+	defer utils.DB.Close()
+
+	bookStore := stores.NewBookStore(utils.DB)
+	authorStore := stores.NewAuthorStore(utils.DB)
 
 	bookHandler := handlers.NewBookHandler(bookStore)
 	authorHandler := handlers.NewAuthorHandler(authorStore)
@@ -24,6 +28,7 @@ func main() {
 
 	bookMux.HandleFunc("GET /", bookHandler.HandleGetAll)
 	bookMux.HandleFunc("GET /{id}", bookHandler.HandleGetByID)
+	bookMux.HandleFunc("GET /find-by-title", bookHandler.HandleFindByTitle)
 	bookMux.HandleFunc("POST /", bookHandler.HandleCreate)
 	bookMux.HandleFunc("PUT /{id}", bookHandler.HandleUpdate)
 	bookMux.HandleFunc("DELETE /{id}", bookHandler.HandleDelete)
