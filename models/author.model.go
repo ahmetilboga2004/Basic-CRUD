@@ -9,7 +9,6 @@ type Author struct {
 	Age       int    `json:"age"`
 }
 
-// Author için validasyon
 func (a Author) Validate() error {
 	if a.FirstName == "" || a.LastName == "" {
 		return errors.New("invalid author name")

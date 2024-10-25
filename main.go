@@ -22,14 +22,12 @@ func main() {
 	mux.Handle("/books/", http.StripPrefix("/books", bookMux))
 	mux.Handle("/authors/", http.StripPrefix("/authors", authorMux))
 
-	// Book Subrouter
 	bookMux.HandleFunc("GET /", bookHandler.HandleGetAll)
 	bookMux.HandleFunc("GET /{id}", bookHandler.HandleGetByID)
 	bookMux.HandleFunc("POST /", bookHandler.HandleCreate)
 	bookMux.HandleFunc("PUT /{id}", bookHandler.HandleUpdate)
 	bookMux.HandleFunc("DELETE /{id}", bookHandler.HandleDelete)
 
-	// Author Subrouter
 	authorMux.HandleFunc("GET /", authorHandler.HandleGetAll)
 	authorMux.HandleFunc("GET /{id}", authorHandler.HandleGetByID)
 	authorMux.HandleFunc("POST /", authorHandler.HandleCreate)

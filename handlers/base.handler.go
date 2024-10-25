@@ -8,16 +8,14 @@ import (
 	"strconv"
 )
 
-// BaseHandler, genel CRUD işlemleri için temel bir yapı sağlar.
 type BaseHandler[T stores.Validator[T]] struct {
-	Store stores.Store[T] // Store arayüzü burada kullanılacak
+	Store stores.Store[T]
 }
 
 func NewBaseHandler[T stores.Validator[T]](store stores.Store[T]) *BaseHandler[T] {
 	return &BaseHandler[T]{Store: store}
 }
 
-// HandleGetAll, tüm öğeleri döndürür.
 func (h *BaseHandler[T]) HandleGetAll(w http.ResponseWriter, r *http.Request) {
 	items, err := h.Store.GetAll()
 	if err != nil {
@@ -27,9 +25,8 @@ func (h *BaseHandler[T]) HandleGetAll(w http.ResponseWriter, r *http.Request) {
 	utils.WriteJSON(w, http.StatusOK, items)
 }
 
-// HandleGetByID, belirli bir ID'ye sahip öğeyi döndürür.
 func (h *BaseHandler[T]) HandleGetByID(w http.ResponseWriter, r *http.Request) {
-	id, err := strconv.Atoi(r.PathValue("id")) // Burada istediğin kodu kullanıyoruz
+	id, err := strconv.Atoi(r.PathValue("id"))
 	if err != nil {
 		http.Error(w, "invalid ID", http.StatusBadRequest)
 		return
@@ -42,7 +39,6 @@ func (h *BaseHandler[T]) HandleGetByID(w http.ResponseWriter, r *http.Request) {
 	utils.WriteJSON(w, http.StatusOK, item)
 }
 
-// HandleCreate, yeni bir öğe ekler.
 func (h *BaseHandler[T]) HandleCreate(w http.ResponseWriter, r *http.Request) {
 	var item T
 	err := json.NewDecoder(r.Body).Decode(&item)
@@ -58,9 +54,8 @@ func (h *BaseHandler[T]) HandleCreate(w http.ResponseWriter, r *http.Request) {
 	utils.WriteJSON(w, http.StatusCreated, item)
 }
 
-// HandleUpdate, belirli bir ID'ye sahip öğeyi günceller.
 func (h *BaseHandler[T]) HandleUpdate(w http.ResponseWriter, r *http.Request) {
-	id, err := strconv.Atoi(r.PathValue("id")) // Burada istediğin kodu kullanıyoruz
+	id, err := strconv.Atoi(r.PathValue("id"))
 	if err != nil {
 		http.Error(w, "invalid ID", http.StatusBadRequest)
 		return
@@ -79,9 +74,8 @@ func (h *BaseHandler[T]) HandleUpdate(w http.ResponseWriter, r *http.Request) {
 	utils.WriteJSON(w, http.StatusOK, item)
 }
 
-// HandleDelete, belirli bir ID'ye sahip öğeyi siler.
 func (h *BaseHandler[T]) HandleDelete(w http.ResponseWriter, r *http.Request) {
-	id, err := strconv.Atoi(r.PathValue("id")) // Burada istediğin kodu kullanıyoruz
+	id, err := strconv.Atoi(r.PathValue("id"))
 	if err != nil {
 		http.Error(w, "invalid ID", http.StatusBadRequest)
 		return
