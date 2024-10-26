@@ -16,9 +16,14 @@ func NewAuthorStore(db *sql.DB) *AuthorStore {
 	}
 }
 
-func (as *AuthorStore) Create(author *models.Author) error {
-	_, err := as.DB.Exec("INSERT INTO authors (firstName, lastName, age) VALUES (?, ?, ?)", author.FirstName, author.LastName, author.Age)
-	return err
+func (as *AuthorStore) Create(author *models.Author) (*models.Author, error) {
+	query := `INSERT INTO authors (firstName, lastName, age) VALUES (?, ?, ?) RETURNING *`
+	err := as.DB.QueryRow(query, author.FirstName, author.LastName, author.Age).Scan(&author.ID, &author.FirstName, &author.LastName, &author.Age)
+	if err != nil {
+		return nil, err
+	}
+
+	return author, nil
 }
 
 func (as *AuthorStore) GetAll() ([]*models.Author, error) {

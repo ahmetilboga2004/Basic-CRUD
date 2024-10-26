@@ -16,13 +16,18 @@ func NewBookStore(db *sql.DB) *BookStore {
 	}
 }
 
-func (bs *BookStore) Create(book *models.Book) error {
-	_, err := bs.DB.Exec("INSERT INTO books (title, desc) VALUES (?, ?)", book.Title, book.Desc)
-	return err
+func (bs *BookStore) Create(book *models.Book) (*models.Book, error) {
+	query := `INSERT INTO books (title, desc) VALUES (?, ?) RETURNING *`
+	err := bs.DB.QueryRow(query, book.Title, book.Desc).Scan(&book.ID, &book.Title, &book.Desc)
+	if err != nil {
+		return nil, err
+	}
+
+	return book, nil
 }
 
 func (bs *BookStore) GetAll() ([]*models.Book, error) {
-	rows, err := bs.DB.Query("SELECT id, title, desc FROM books")
+	rows, err := bs.DB.Query("SELECT * FROM books")
 	if err != nil {
 		return nil, err
 	}
@@ -40,7 +45,7 @@ func (bs *BookStore) GetAll() ([]*models.Book, error) {
 }
 
 func (bs *BookStore) Get(id int) (*models.Book, error) {
-	row := bs.DB.QueryRow("SELECT id, title, desc FROM books WHERE id = ?", id)
+	row := bs.DB.QueryRow("SELECT * FROM books WHERE id = ?", id)
 	var book models.Book
 	if err := row.Scan(&book.ID, &book.Title, &book.Desc); err != nil {
 		if err == sql.ErrNoRows {

@@ -46,12 +46,12 @@ func (h *BaseHandler[T]) HandleCreate(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "invalid data", http.StatusBadRequest)
 		return
 	}
-	err = h.Store.Create(item)
+	result, err := h.Store.Create(item)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	utils.WriteJSON(w, http.StatusCreated, item)
+	utils.WriteJSON(w, http.StatusCreated, result)
 }
 
 func (h *BaseHandler[T]) HandleUpdate(w http.ResponseWriter, r *http.Request) {

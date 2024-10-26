@@ -5,7 +5,7 @@ type Validator[T any] interface {
 }
 
 type Store[T Validator[T]] interface {
-	Create(item T) error
+	Create(item T) (T, error)
 	GetAll() ([]T, error)
 	Get(id int) (T, error)
 	Update(id int, item T) error
