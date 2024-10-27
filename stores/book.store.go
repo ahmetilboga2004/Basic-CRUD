@@ -62,8 +62,18 @@ func (bs *BookStore) Update(id int, book *models.Book) error {
 }
 
 func (bs *BookStore) Delete(id int) error {
-	_, err := bs.DB.Exec("DELETE FROM books WHERE id = ?", id)
-	return err
+	result, err := bs.DB.Exec("DELETE FROM books WHERE id = ?", id)
+	if err != nil {
+		return err
+	}
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rowsAffected == 0 {
+		return errors.New("book not found")
+	}
+	return nil
 }
 
 func (bs *BookStore) FindByTitle(title string) (*models.Book, error) {
